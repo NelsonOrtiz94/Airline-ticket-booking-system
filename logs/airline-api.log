@@ -1,0 +1,1177 @@
+2026-02-25 09:25:14 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-02-25 09:25:14 [main] INFO  org.example.Main - Starting Main using Java 21.0.10 with PID 21028 (C:\Users\NelsonAlejandroOrtiz\IdeaProjects\AirplaneTicketBooking\target\classes started by NelsonAlejandroOrtiz in C:\Users\NelsonAlejandroOrtiz\IdeaProjects\AirplaneTicketBooking)
+2026-02-25 09:25:14 [main] DEBUG org.example.Main - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-25 09:25:14 [main] INFO  org.example.Main - No active profile set, falling back to 1 default profile: "default"
+2026-02-25 09:25:15 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2026-02-25 09:25:15 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 182 ms. Found 4 R2DBC repository interfaces.
+2026-02-25 09:25:17 [main] INFO  o.e.infrastructure.config.JwtService - JwtService initialized with expiration: 86400000 ms
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executing SQL script from class path resource [schema.sql]
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS reservations CASCADE
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS tickets CASCADE
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS flights CASCADE
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS users CASCADE
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE users ( user_id SERIAL PRIMARY KEY, username VARCHAR(50) UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, first_name VARCHAR(30) NOT NULL, last_name VARCHAR(30) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, role VARCHAR(20) NOT NULL DEFAULT 'USER', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP )
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE flights ( flight_id SERIAL PRIMARY KEY, flight_number VARCHAR(20) UNIQUE NOT NULL, origin VARCHAR(30) NOT NULL, destination VARCHAR(30) NOT NULL, departure_time TIMESTAMP NOT NULL, arrival_time TIMESTAMP NOT NULL, available_seats INTEGER NOT NULL, total_seats INTEGER NOT NULL, price DECIMAL(10, 2) NOT NULL, airline VARCHAR(30) NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP )
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE tickets ( ticket_id SERIAL PRIMARY KEY, flight_id INTEGER NOT NULL, user_id INTEGER NOT NULL, passenger_name VARCHAR(30) NOT NULL, seat_number VARCHAR(10) NOT NULL, price DECIMAL(10, 2) NOT NULL, ticket_class VARCHAR(20) NOT NULL DEFAULT 'ECONOMY', status VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (flight_id) REFERENCES flights(flight_id), FOREIGN KEY (user_id) REFERENCES users(user_id) )
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE reservations ( reservation_id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL, ticket_id INTEGER NOT NULL, flight_id INTEGER NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED', observations VARCHAR(100), reservation_date TIMESTAMP NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(user_id), FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id), FOREIGN KEY (flight_id) REFERENCES flights(flight_id) )
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_flights_origin_destination ON flights(origin, destination)
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_flights_departure_time ON flights(departure_time)
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_tickets_user_id ON tickets(user_id)
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_tickets_flight_id ON tickets(flight_id)
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_reservations_user_id ON reservations(user_id)
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_reservations_status ON reservations(status)
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executed SQL script from class path resource [schema.sql] in 98 ms.
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executing SQL script from class path resource [data.sql]
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 1 returned as update count for SQL: INSERT INTO users (user_id, username, password, first_name, last_name, email, role, created_at, updated_at) VALUES (1, 'admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'Admin', 'System', 'admin@airline.com', 'ADMIN', NOW(), NOW())
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 21 returned as update count for SQL: INSERT INTO flights (flight_id, flight_number, origin, destination, departure_time, arrival_time, available_seats, total_seats, price, airline, status, created_at, updated_at) VALUES (1, 'AV101', 'BOG', 'MDE', '2026-03-15 08:00:00', '2026-03-15 09:30:00', 50, 50, 250000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (2, 'AV102', 'BOG', 'CTG', '2026-03-16 10:00:00', '2026-03-16 11:30:00', 50, 50, 300000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (3, 'AV103', 'BOG', 'CLO', '2026-03-17 12:00:00', '2026-03-17 13:00:00', 30, 30, 280000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (4, 'LA201', 'BOG', 'BAQ', '2026-03-18 14:00:00', '2026-03-18 15:15:00', 80, 80, 180000.00, 'LATAM', 'ACTIVE', NOW(), NOW()), (5, 'AV104', 'BOG', 'SMR', '2026-03-19 07:00:00', '2026-03-19 08:30:00', 40, 40, 320000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (6, 'AV105', 'BOG', 'PEI', '2026-03-20 09:00:00', '2026-03-20 10:00:00', 35, 35, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (7, 'AV106', 'BOG', 'BGA', '2026-03-21 11:00:00', '2026-03-21 12:00:00', 45, 45, 190000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (8, 'AV107', 'BOG', 'ADZ', '2026-03-22 13:00:00', '2026-03-22 15:00:00', 60, 60, 450000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (9, 'AV201', 'MDE', 'BOG', '2026-03-15 10:00:00', '2026-03-15 11:30:00', 50, 50, 250000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (10, 'AV202', 'MDE', 'CTG', '2026-03-16 12:00:00', '2026-03-16 13:30:00', 40, 40, 270000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (11, 'AV203', 'MDE', 'CLO', '2026-03-17 14:00:00', '2026-03-17 15:00:00', 30, 30, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (12, 'WI301', 'CTG', 'BOG', '2026-03-19 16:00:00', '2026-03-19 17:30:00', 60, 60, 220000.00, 'Wingo', 'ACTIVE', NOW(), NOW()), (13, 'WI302', 'CTG', 'MDE', '2026-03-20 08:00:00', '2026-03-20 09:30:00', 45, 45, 270000.00, 'Wingo', 'ACTIVE', NOW(), NOW()), (14, 'LA301', 'CTG', 'CLO', '2026-03-21 10:00:00', '2026-03-21 11:30:00', 35, 35, 290000.00, 'LATAM', 'ACTIVE', NOW(), NOW()), (15, 'AV401', 'CLO', 'BOG', '2026-03-17 13:30:00', '2026-03-17 14:30:00', 30, 30, 280000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (16, 'AV402', 'CLO', 'MDE', '2026-03-18 15:00:00', '2026-03-18 16:00:00', 30, 30, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (17, 'LA401', 'BAQ', 'BOG', '2026-03-18 16:00:00', '2026-03-18 17:15:00', 80, 80, 180000.00, 'LATAM', 'ACTIVE', NOW(), NOW()), (18, 'AV501', 'SMR', 'BOG', '2026-03-19 09:00:00', '2026-03-19 10:30:00', 40, 40, 320000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (19, 'AV601', 'PEI', 'BOG', '2026-03-20 11:00:00', '2026-03-20 12:00:00', 35, 35, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (20, 'AV701', 'BGA', 'BOG', '2026-03-21 13:00:00', '2026-03-21 14:00:00', 45, 45, 190000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (21, 'AV801', 'ADZ', 'BOG', '2026-03-22 16:00:00', '2026-03-22 18:00:00', 60, 60, 450000.00, 'Avianca', 'ACTIVE', NOW(), NOW())
+2026-02-25 09:25:17 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executed SQL script from class path resource [data.sql] in 13 ms.
+2026-02-25 09:25:17 [main] INFO  o.s.b.a.s.r.ReactiveUserDetailsServiceAutoConfiguration - 
+
+Using generated security password: d08dbf89-de09-42d1-a1cf-1198d40e2e76
+
+2026-02-25 09:25:18 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-02-25 09:25:18 [main] INFO  o.s.b.w.e.netty.NettyWebServer - Netty started on port 8085
+2026-02-25 09:25:18 [main] INFO  org.example.Main - Started Main in 4.466 seconds (process running for 4.939)
+2026-02-25 09:38:13 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/login
+2026-02-25 09:38:13 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/auth/login' doesn't match 'POST /logout'
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/auth/login'; against '/airline/auth/**'
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/auth/login' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e88d68a7b0@218ba7fa
+2026-02-25 09:38:13 [parallel-13] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:38:13 [parallel-13] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/auth/login | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [b89c82cb-801b-4293-b9ed-15d094c63c11]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [51]
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/login
+2026-02-25 09:38:13 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:13 [reactor-http-nio-3] INFO  o.e.a.u.AuthenticateUserUseCaseImpl - Intento de login para usuario: admin
+2026-02-25 09:38:13 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM users WHERE username = $1]
+2026-02-25 09:38:13 [reactor-tcp-nio-10] INFO  o.e.a.u.AuthenticateUserUseCaseImpl - Login exitoso para usuario: admin
+2026-02-25 09:38:13 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/auth/login | Status: 200 | Duration: 546ms
+2026-02-25 09:38:28 [reactor-http-nio-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/verify
+2026-02-25 09:38:28 [reactor-http-nio-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/auth/verify' doesn't match 'POST /logout'
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/auth/verify'; against '/airline/auth/**'
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/auth/verify' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e88d68a7b0@218ba7fa
+2026-02-25 09:38:28 [parallel-1] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:38:28 [parallel-1] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] GET /airline/auth/verify | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [acd3e2b7-b8c5-44fb-8732-eb80ee08ed84]
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/verify
+2026-02-25 09:38:28 [parallel-1] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:28 [reactor-http-nio-5] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] GET /airline/auth/verify | Status: 200 | Duration: 78ms
+2026-02-25 09:38:34 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:34 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e88d68a7b0@218ba7fa
+2026-02-25 09:38:34 [parallel-2] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:38:34 [parallel-2] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MTI2ODk3OSwiZXhwIjoxNzcxMzU1Mzc5fQ.WeTFRq_CfYemC_A-h3J2IU5aAihxIOiwtxXCvxfcGyg]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [d25e9646-2dec-4473-8e8e-a01dce392b49]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [51]
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:34 [parallel-2] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:34 [reactor-http-nio-3] INFO  o.e.i.e.rest.FlightController - Recibida solicitud de búsqueda de vuelos: cartagena -> BOG
+2026-02-25 09:38:34 [reactor-http-nio-3] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Buscando vuelos de cartagena a BOG para fecha: null
+2026-02-25 09:38:34 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM flights WHERE origin = $1 AND destination = $2 AND status = 'ACTIVE' AND available_seats > 0]
+2026-02-25 09:38:34 [reactor-tcp-nio-10] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Búsqueda de vuelos completada
+2026-02-25 09:38:34 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 200 | Duration: 62ms
+2026-02-25 09:38:38 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:38 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e88d68a7b0@218ba7fa
+2026-02-25 09:38:38 [parallel-4] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:38:38 [parallel-4] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [0dd5af4d-8ec7-4490-9103-9fb1fc6b75b4]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [45]
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:38 [parallel-4] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:38 [reactor-http-nio-3] INFO  o.e.i.e.rest.FlightController - Recibida solicitud de búsqueda de vuelos: BOG -> CTG
+2026-02-25 09:38:38 [reactor-http-nio-3] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Buscando vuelos de BOG a CTG para fecha: null
+2026-02-25 09:38:38 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM flights WHERE origin = $1 AND destination = $2 AND status = 'ACTIVE' AND available_seats > 0]
+2026-02-25 09:38:38 [reactor-tcp-nio-10] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Búsqueda de vuelos completada
+2026-02-25 09:38:38 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 200 | Duration: 8ms
+2026-02-25 09:38:40 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:40 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e88d68a7b0@218ba7fa
+2026-02-25 09:38:40 [parallel-6] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:38:40 [parallel-6] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [42d05115-545e-4edf-a9c1-370cfecb4bc4]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [45]
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:40 [parallel-6] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:40 [reactor-http-nio-3] INFO  o.e.i.e.rest.FlightController - Recibida solicitud de búsqueda de vuelos: BOG -> CTG
+2026-02-25 09:38:40 [reactor-http-nio-3] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Buscando vuelos de BOG a CTG para fecha: null
+2026-02-25 09:38:40 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM flights WHERE origin = $1 AND destination = $2 AND status = 'ACTIVE' AND available_seats > 0]
+2026-02-25 09:38:40 [reactor-tcp-nio-10] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Búsqueda de vuelos completada
+2026-02-25 09:38:40 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 200 | Duration: 8ms
+2026-02-25 09:38:46 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:46 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x000001e88d68a7b0@218ba7fa
+2026-02-25 09:38:46 [parallel-8] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:38:46 [parallel-8] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [89caa2c5-235d-441a-8db9-82c200afd959]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [39]
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:38:46 [parallel-8] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:38:46 [reactor-http-nio-3] WARN  o.e.i.e.r.e.GlobalExceptionHandler - Errores de validación: Validation failed for argument at index 0 in method: public reactor.core.publisher.Mono<org.example.infrastructure.entrypoints.rest.dto.response.ApiResponse<java.util.List<org.example.infrastructure.entrypoints.rest.dto.response.FlightResponseDTO>>> org.example.infrastructure.entrypoints.rest.FlightController.searchFlights(org.example.infrastructure.entrypoints.rest.dto.request.FlightSearchRequestDTO), with 2 error(s): [Field error in object 'flightSearchRequestDTO' on field 'origin': rejected value []; codes [NotBlank.flightSearchRequestDTO.origin,NotBlank.origin,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [flightSearchRequestDTO.origin,origin]; arguments []; default message [origin]]; default message [Origin is required]] [Field error in object 'flightSearchRequestDTO' on field 'destination': rejected value []; codes [NotBlank.flightSearchRequestDTO.destination,NotBlank.destination,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [flightSearchRequestDTO.destination,destination]; arguments []; default message [destination]]; default message [Destination is required]] 
+2026-02-25 09:38:46 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 400 | Duration: 14ms
+2026-02-25 09:39:27 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:39:27 [reactor-http-nio-3] ERROR o.e.i.config.JwtAuthenticationFilter - Error validando token JWT: JWT expired 760333944 milliseconds ago at 2026-02-16T19:27:14.000Z. Current time: 2026-02-25T14:39:27.944Z. Allowed clock skew: 0 milliseconds.
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:39:27 [parallel-9] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization failed: Access Denied
+2026-02-25 09:39:37 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:39:37 [reactor-http-nio-3] ERROR o.e.i.config.JwtAuthenticationFilter - Error validando token JWT: JWT expired 760343309 milliseconds ago at 2026-02-16T19:27:14.000Z. Current time: 2026-02-25T14:39:37.309Z. Allowed clock skew: 0 milliseconds.
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:39:37 [parallel-10] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization failed: Access Denied
+2026-02-25 09:39:55 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:39:55 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:39:55 [parallel-11] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:39:55 [parallel-11] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [40688b22-10d6-4004-9005-0832dadbc8bc]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [130]
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:39:55 [parallel-11] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:39:55 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de reserva para vuelo ID: 1
+2026-02-25 09:39:55 [reactor-http-nio-3] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Procesando reserva para vuelo ID: 1 y usuario ID: 1
+2026-02-25 09:39:55 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:39:55 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT EXISTS(SELECT 1 FROM tickets WHERE seat_number = $1 AND flight_id = $2 AND status != 'CANCELLED')]
+2026-02-25 09:39:55 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO tickets (flight_id, user_id, passenger_name, seat_number, price, ticket_class, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)]
+2026-02-25 09:39:55 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO reservations (user_id, ticket_id, flight_id, status, reservation_date, created_at) VALUES ($1, $2, $3, $4, $5, $6)]
+2026-02-25 09:39:55 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE flights SET flight_number = $1, origin = $2, destination = $3, departure_time = $4, arrival_time = $5, available_seats = $6, total_seats = $7, price = $8, airline = $9, status = $10, created_at = $11, updated_at = $12 WHERE flights.flight_id = $13]
+2026-02-25 09:39:55 [reactor-tcp-nio-10] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Reserva creada exitosamente con ID: 1
+2026-02-25 09:39:55 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:39:55 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:39:55 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/reservations | Status: 200 | Duration: 155ms
+2026-02-25 09:39:59 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:39:59 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:39:59 [parallel-5] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:39:59 [parallel-5] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [b85f5a0e-4bc3-4b4d-91e0-ad65ebf38b72]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [123]
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:39:59 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:39:59 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de reserva para vuelo ID: 2
+2026-02-25 09:39:59 [reactor-http-nio-3] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Procesando reserva para vuelo ID: 2 y usuario ID: 1
+2026-02-25 09:39:59 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:39:59 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT EXISTS(SELECT 1 FROM tickets WHERE seat_number = $1 AND flight_id = $2 AND status != 'CANCELLED')]
+2026-02-25 09:39:59 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO tickets (flight_id, user_id, passenger_name, seat_number, price, ticket_class, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)]
+2026-02-25 09:39:59 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO reservations (user_id, ticket_id, flight_id, status, reservation_date, created_at) VALUES ($1, $2, $3, $4, $5, $6)]
+2026-02-25 09:39:59 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE flights SET flight_number = $1, origin = $2, destination = $3, departure_time = $4, arrival_time = $5, available_seats = $6, total_seats = $7, price = $8, airline = $9, status = $10, created_at = $11, updated_at = $12 WHERE flights.flight_id = $13]
+2026-02-25 09:39:59 [reactor-tcp-nio-9] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Reserva creada exitosamente con ID: 2
+2026-02-25 09:39:59 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:39:59 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:39:59 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/reservations | Status: 200 | Duration: 70ms
+2026-02-25 09:40:02 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/user/1
+2026-02-25 09:40:02 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'POST /logout'
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /airline/auth/**'
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /airline/flights/search'
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /actuator/**'
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations/user/1'; against '/airline/reservations/**'
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations/user/1' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:40:02 [parallel-13] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:40:02 [parallel-13] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] GET /airline/reservations/user/1 | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [0e8c34f0-822d-4aa1-b0c9-f64444931e96]
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/user/1
+2026-02-25 09:40:02 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:02 [parallel-13] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de reservas para usuario ID: 1
+2026-02-25 09:40:02 [parallel-13] INFO  o.e.a.u.GetUserReservationsUseCaseImpl - Obteniendo reservaciones del usuario ID: 1
+2026-02-25 09:40:02 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM reservations WHERE user_id = $1]
+2026-02-25 09:40:02 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:02 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:02 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:02 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:02 [reactor-tcp-nio-10] INFO  o.e.a.u.GetUserReservationsUseCaseImpl - Reservaciones obtenidas exitosamente para usuario: 1
+2026-02-25 09:40:02 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] GET /airline/reservations/user/1 | Status: 200 | Duration: 23ms
+2026-02-25 09:40:08 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:08 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:40:08 [parallel-5] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:40:08 [parallel-5] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [eecebc63-b233-464f-81b9-c6bbd8a970e5]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:08 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:08 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:40:08 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:40:08 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:40:08 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:40:08 [reactor-tcp-nio-9] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:40:08 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:08 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:08 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 50ms
+2026-02-25 09:40:17 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:17 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:40:17 [parallel-10] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:40:17 [parallel-10] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [2f89540f-29d2-4870-8431-a265a0ccb172]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:17 [parallel-10] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:17 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:40:17 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:40:17 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:40:17 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:40:17 [reactor-tcp-nio-7] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:40:17 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:17 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:17 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 43ms
+2026-02-25 09:40:22 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/user/1
+2026-02-25 09:40:22 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'POST /logout'
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /airline/auth/**'
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /airline/flights/search'
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /actuator/**'
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations/user/1'; against '/airline/reservations/**'
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations/user/1' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:40:22 [parallel-1] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:40:22 [parallel-1] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] GET /airline/reservations/user/1 | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [2e29dae3-ec29-4d4b-b95a-102616b860af]
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/user/1
+2026-02-25 09:40:22 [parallel-1] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:22 [parallel-1] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de reservas para usuario ID: 1
+2026-02-25 09:40:22 [parallel-1] INFO  o.e.a.u.GetUserReservationsUseCaseImpl - Obteniendo reservaciones del usuario ID: 1
+2026-02-25 09:40:22 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM reservations WHERE user_id = $1]
+2026-02-25 09:40:22 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:22 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:22 [reactor-tcp-nio-9] INFO  o.e.a.u.GetUserReservationsUseCaseImpl - Reservaciones obtenidas exitosamente para usuario: 1
+2026-02-25 09:40:22 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:22 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:22 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] GET /airline/reservations/user/1 | Status: 200 | Duration: 14ms
+2026-02-25 09:40:45 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:45 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:40:45 [parallel-7] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:40:45 [parallel-7] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [9ba347ba-e51a-47b3-8948-eb2585207d14]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [99]
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:45 [parallel-7] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:45 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:40:45 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:40:45 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:40:45 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:40:45 [reactor-tcp-nio-6] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:40:45 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:45 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:45 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 49ms
+2026-02-25 09:40:52 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:52 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:40:52 [parallel-12] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:40:52 [parallel-12] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [b4e3af49-5288-41de-a044-36eed027745e]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [66]
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:40:52 [parallel-12] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:40:52 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:40:52 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:40:52 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:40:52 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:40:52 [reactor-tcp-nio-6] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:40:52 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:40:52 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:40:52 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 30ms
+2026-02-25 09:41:21 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:41:21 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:41:21 [parallel-3] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:41:21 [parallel-3] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [bf14f95e-a3d4-4a35-8df7-19604d0d620b]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:41:21 [parallel-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:41:21 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:41:21 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:41:21 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:41:21 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:41:21 [reactor-tcp-nio-6] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:41:21 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:41:21 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:41:21 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 24ms
+2026-02-25 09:41:31 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:41:31 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:41:31 [parallel-8] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:41:31 [parallel-8] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [234a1db4-bd15-46df-98b6-850a7d0bffd5]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:41:31 [parallel-8] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:41:31 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:41:31 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:41:31 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:41:31 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:41:31 [reactor-tcp-nio-6] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:41:31 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:41:31 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:41:31 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 16ms
+2026-02-25 09:44:05 [reactor-http-nio-7] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:44:05 [reactor-http-nio-7] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@56c97d19
+2026-02-25 09:44:05 [parallel-13] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:44:05 [parallel-13] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [017148ac-9a16-4ec0-94fc-77b103eda9f0]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:44:05 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:44:05 [reactor-http-nio-7] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:44:05 [reactor-http-nio-7] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:44:05 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:44:05 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:44:05 [reactor-tcp-nio-10] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:44:05 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:44:05 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:44:05 [reactor-http-nio-7] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 50ms
+2026-02-25 09:53:50 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-02-25 09:53:50 [main] INFO  org.example.Main - Starting Main using Java 21.0.10 with PID 8320 (C:\Users\NelsonAlejandroOrtiz\IdeaProjects\AirplaneTicketBooking\target\classes started by NelsonAlejandroOrtiz in C:\Users\NelsonAlejandroOrtiz\IdeaProjects\AirplaneTicketBooking)
+2026-02-25 09:53:50 [main] DEBUG org.example.Main - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-25 09:53:50 [main] INFO  org.example.Main - No active profile set, falling back to 1 default profile: "default"
+2026-02-25 09:53:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2026-02-25 09:53:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 174 ms. Found 4 R2DBC repository interfaces.
+2026-02-25 09:53:53 [main] INFO  o.e.infrastructure.config.JwtService - JwtService initialized with expiration: 86400000 ms
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executing SQL script from class path resource [schema.sql]
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS reservations CASCADE
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS tickets CASCADE
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS flights CASCADE
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: DROP TABLE IF EXISTS users CASCADE
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE users ( user_id SERIAL PRIMARY KEY, username VARCHAR(50) UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, first_name VARCHAR(30) NOT NULL, last_name VARCHAR(30) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, role VARCHAR(20) NOT NULL DEFAULT 'USER', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP )
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE flights ( flight_id SERIAL PRIMARY KEY, flight_number VARCHAR(20) UNIQUE NOT NULL, origin VARCHAR(30) NOT NULL, destination VARCHAR(30) NOT NULL, departure_time TIMESTAMP NOT NULL, arrival_time TIMESTAMP NOT NULL, available_seats INTEGER NOT NULL, total_seats INTEGER NOT NULL, price DECIMAL(10, 2) NOT NULL, airline VARCHAR(30) NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP )
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE tickets ( ticket_id SERIAL PRIMARY KEY, flight_id INTEGER NOT NULL, user_id INTEGER NOT NULL, passenger_name VARCHAR(30) NOT NULL, seat_number VARCHAR(10) NOT NULL, price DECIMAL(10, 2) NOT NULL, ticket_class VARCHAR(20) NOT NULL DEFAULT 'ECONOMY', status VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (flight_id) REFERENCES flights(flight_id), FOREIGN KEY (user_id) REFERENCES users(user_id) )
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE TABLE reservations ( reservation_id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL, ticket_id INTEGER NOT NULL, flight_id INTEGER NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED', observations VARCHAR(100), reservation_date TIMESTAMP NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(user_id), FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id), FOREIGN KEY (flight_id) REFERENCES flights(flight_id) )
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_flights_origin_destination ON flights(origin, destination)
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_flights_departure_time ON flights(departure_time)
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_tickets_user_id ON tickets(user_id)
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_tickets_flight_id ON tickets(flight_id)
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_reservations_user_id ON reservations(user_id)
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 0 returned as update count for SQL: CREATE INDEX idx_reservations_status ON reservations(status)
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executed SQL script from class path resource [schema.sql] in 112 ms.
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executing SQL script from class path resource [data.sql]
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 1 returned as update count for SQL: INSERT INTO users (user_id, username, password, first_name, last_name, email, role, created_at, updated_at) VALUES (1, 'admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'Admin', 'System', 'admin@airline.com', 'ADMIN', NOW(), NOW())
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - 21 returned as update count for SQL: INSERT INTO flights (flight_id, flight_number, origin, destination, departure_time, arrival_time, available_seats, total_seats, price, airline, status, created_at, updated_at) VALUES (1, 'AV101', 'BOG', 'MDE', '2026-03-15 08:00:00', '2026-03-15 09:30:00', 50, 50, 250000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (2, 'AV102', 'BOG', 'CTG', '2026-03-16 10:00:00', '2026-03-16 11:30:00', 50, 50, 300000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (3, 'AV103', 'BOG', 'CLO', '2026-03-17 12:00:00', '2026-03-17 13:00:00', 30, 30, 280000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (4, 'LA201', 'BOG', 'BAQ', '2026-03-18 14:00:00', '2026-03-18 15:15:00', 80, 80, 180000.00, 'LATAM', 'ACTIVE', NOW(), NOW()), (5, 'AV104', 'BOG', 'SMR', '2026-03-19 07:00:00', '2026-03-19 08:30:00', 40, 40, 320000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (6, 'AV105', 'BOG', 'PEI', '2026-03-20 09:00:00', '2026-03-20 10:00:00', 35, 35, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (7, 'AV106', 'BOG', 'BGA', '2026-03-21 11:00:00', '2026-03-21 12:00:00', 45, 45, 190000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (8, 'AV107', 'BOG', 'ADZ', '2026-03-22 13:00:00', '2026-03-22 15:00:00', 60, 60, 450000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (9, 'AV201', 'MDE', 'BOG', '2026-03-15 10:00:00', '2026-03-15 11:30:00', 50, 50, 250000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (10, 'AV202', 'MDE', 'CTG', '2026-03-16 12:00:00', '2026-03-16 13:30:00', 40, 40, 270000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (11, 'AV203', 'MDE', 'CLO', '2026-03-17 14:00:00', '2026-03-17 15:00:00', 30, 30, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (12, 'WI301', 'CTG', 'BOG', '2026-03-19 16:00:00', '2026-03-19 17:30:00', 60, 60, 220000.00, 'Wingo', 'ACTIVE', NOW(), NOW()), (13, 'WI302', 'CTG', 'MDE', '2026-03-20 08:00:00', '2026-03-20 09:30:00', 45, 45, 270000.00, 'Wingo', 'ACTIVE', NOW(), NOW()), (14, 'LA301', 'CTG', 'CLO', '2026-03-21 10:00:00', '2026-03-21 11:30:00', 35, 35, 290000.00, 'LATAM', 'ACTIVE', NOW(), NOW()), (15, 'AV401', 'CLO', 'BOG', '2026-03-17 13:30:00', '2026-03-17 14:30:00', 30, 30, 280000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (16, 'AV402', 'CLO', 'MDE', '2026-03-18 15:00:00', '2026-03-18 16:00:00', 30, 30, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (17, 'LA401', 'BAQ', 'BOG', '2026-03-18 16:00:00', '2026-03-18 17:15:00', 80, 80, 180000.00, 'LATAM', 'ACTIVE', NOW(), NOW()), (18, 'AV501', 'SMR', 'BOG', '2026-03-19 09:00:00', '2026-03-19 10:30:00', 40, 40, 320000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (19, 'AV601', 'PEI', 'BOG', '2026-03-20 11:00:00', '2026-03-20 12:00:00', 35, 35, 200000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (20, 'AV701', 'BGA', 'BOG', '2026-03-21 13:00:00', '2026-03-21 14:00:00', 45, 45, 190000.00, 'Avianca', 'ACTIVE', NOW(), NOW()), (21, 'AV801', 'ADZ', 'BOG', '2026-03-22 16:00:00', '2026-03-22 18:00:00', 60, 60, 450000.00, 'Avianca', 'ACTIVE', NOW(), NOW())
+2026-02-25 09:53:54 [reactor-tcp-nio-1] DEBUG o.s.r.connection.init.ScriptUtils - Executed SQL script from class path resource [data.sql] in 13 ms.
+2026-02-25 09:53:54 [main] INFO  o.s.b.a.s.r.ReactiveUserDetailsServiceAutoConfiguration - 
+
+Using generated security password: fd3eadb2-9780-4d72-af3d-2e4c790299f6
+
+2026-02-25 09:53:55 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-02-25 09:53:55 [main] INFO  o.s.b.w.e.netty.NettyWebServer - Netty started on port 8085
+2026-02-25 09:53:55 [main] INFO  org.example.Main - Started Main in 6.089 seconds (process running for 6.756)
+2026-02-25 09:54:30 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:54:30 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:54:30 [parallel-13] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:54:30 [parallel-13] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMDI5MywiZXhwIjoxNzcyMTE2NjkzfQ.pHgg2kL1P2tiQhz0O9NBxnnMy3GbrCyV7y_XpCYC_TU]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [38b7e652-a18b-4d76-a9a3-289b8f043581]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:54:30 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:54:30 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:54:30 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:54:30 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:54:30 [reactor-tcp-nio-10] ERROR o.e.a.u.UpdateReservationUseCaseImpl - Error al actualizar reservación: Reservation not found with ID: 1
+2026-02-25 09:54:30 [reactor-tcp-nio-10] ERROR o.e.i.e.r.e.GlobalExceptionHandler - Reservación no encontrada: Reservation not found with ID: 1
+2026-02-25 09:54:30 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 404 | Duration: 350ms
+2026-02-25 09:54:35 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/login
+2026-02-25 09:54:35 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/auth/login' doesn't match 'POST /logout'
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/auth/login'; against '/airline/auth/**'
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/auth/login' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x00000251e56a8430@317b3c5c
+2026-02-25 09:54:35 [parallel-1] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:54:35 [parallel-1] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/auth/login | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [ecc84b01-cfcd-49f5-bfa5-c57882cf13e6]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [51]
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/login
+2026-02-25 09:54:35 [parallel-1] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:35 [reactor-http-nio-3] INFO  o.e.a.u.AuthenticateUserUseCaseImpl - Intento de login para usuario: admin
+2026-02-25 09:54:35 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM users WHERE username = $1]
+2026-02-25 09:54:35 [reactor-tcp-nio-10] INFO  o.e.a.u.AuthenticateUserUseCaseImpl - Login exitoso para usuario: admin
+2026-02-25 09:54:35 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/auth/login | Status: 200 | Duration: 151ms
+2026-02-25 09:54:46 [reactor-http-nio-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/verify
+2026-02-25 09:54:46 [reactor-http-nio-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/auth/verify' doesn't match 'POST /logout'
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/auth/verify'; against '/airline/auth/**'
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/auth/verify' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x00000251e56a8430@317b3c5c
+2026-02-25 09:54:46 [parallel-3] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:54:46 [parallel-3] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] GET /airline/auth/verify | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [d5e9bfb4-9303-4520-b710-ff0caa0c0d61]
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/auth/verify
+2026-02-25 09:54:46 [parallel-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:46 [reactor-http-nio-5] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] GET /airline/auth/verify | Status: 200 | Duration: 7ms
+2026-02-25 09:54:50 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:54:50 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x00000251e56a8430@317b3c5c
+2026-02-25 09:54:50 [parallel-4] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:54:50 [parallel-4] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MTI2ODk3OSwiZXhwIjoxNzcxMzU1Mzc5fQ.WeTFRq_CfYemC_A-h3J2IU5aAihxIOiwtxXCvxfcGyg]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [0cb7dfdd-2867-4717-915e-83872de36b00]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [51]
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:54:50 [parallel-4] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:50 [reactor-http-nio-3] INFO  o.e.i.e.rest.FlightController - Recibida solicitud de búsqueda de vuelos: cartagena -> BOG
+2026-02-25 09:54:50 [reactor-http-nio-3] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Buscando vuelos de cartagena a BOG para fecha: null
+2026-02-25 09:54:50 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM flights WHERE origin = $1 AND destination = $2 AND status = 'ACTIVE' AND available_seats > 0]
+2026-02-25 09:54:50 [reactor-tcp-nio-10] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Búsqueda de vuelos completada
+2026-02-25 09:54:50 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 200 | Duration: 49ms
+2026-02-25 09:54:54 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:54:54 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x00000251e56a8430@317b3c5c
+2026-02-25 09:54:54 [parallel-6] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:54:54 [parallel-6] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [87f94219-5302-4261-a7d1-601bb3905993]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [45]
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:54:54 [parallel-6] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:54 [reactor-http-nio-3] INFO  o.e.i.e.rest.FlightController - Recibida solicitud de búsqueda de vuelos: BOG -> CTG
+2026-02-25 09:54:54 [reactor-http-nio-3] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Buscando vuelos de BOG a CTG para fecha: null
+2026-02-25 09:54:54 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM flights WHERE origin = $1 AND destination = $2 AND status = 'ACTIVE' AND available_seats > 0]
+2026-02-25 09:54:54 [reactor-tcp-nio-10] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Búsqueda de vuelos completada
+2026-02-25 09:54:54 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 200 | Duration: 7ms
+2026-02-25 09:54:57 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:54:57 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x00000251e56a8430@317b3c5c
+2026-02-25 09:54:57 [parallel-8] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:54:57 [parallel-8] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [de8e71aa-bb49-4f76-bfe1-44d3a3443250]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [45]
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:54:57 [parallel-8] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:54:57 [reactor-http-nio-3] INFO  o.e.i.e.rest.FlightController - Recibida solicitud de búsqueda de vuelos: BOG -> CTG
+2026-02-25 09:54:57 [reactor-http-nio-3] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Buscando vuelos de BOG a CTG para fecha: null
+2026-02-25 09:54:57 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM flights WHERE origin = $1 AND destination = $2 AND status = 'ACTIVE' AND available_seats > 0]
+2026-02-25 09:54:57 [reactor-tcp-nio-10] INFO  o.e.a.u.SearchFlightsUseCaseImpl - Búsqueda de vuelos completada
+2026-02-25 09:54:57 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 200 | Duration: 8ms
+2026-02-25 09:55:00 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:55:00 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'POST /logout'
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/flights/search' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/flights/search'; against '/airline/flights/search'
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/flights/search' using org.springframework.security.config.web.server.ServerHttpSecurity$AuthorizeExchangeSpec$Access$$Lambda/0x00000251e56a8430@317b3c5c
+2026-02-25 09:55:00 [parallel-10] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:00 [parallel-10] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/flights/search | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [db82ad7a-52b6-42b6-ab8b-57236df08346]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [39]
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/flights/search
+2026-02-25 09:55:00 [parallel-10] DEBUG o.e.i.config.JwtAuthenticationFilter - Public path, skipping JWT validation
+2026-02-25 09:55:00 [reactor-http-nio-3] WARN  o.e.i.e.r.e.GlobalExceptionHandler - Errores de validación: Validation failed for argument at index 0 in method: public reactor.core.publisher.Mono<org.example.infrastructure.entrypoints.rest.dto.response.ApiResponse<java.util.List<org.example.infrastructure.entrypoints.rest.dto.response.FlightResponseDTO>>> org.example.infrastructure.entrypoints.rest.FlightController.searchFlights(org.example.infrastructure.entrypoints.rest.dto.request.FlightSearchRequestDTO), with 2 error(s): [Field error in object 'flightSearchRequestDTO' on field 'origin': rejected value []; codes [NotBlank.flightSearchRequestDTO.origin,NotBlank.origin,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [flightSearchRequestDTO.origin,origin]; arguments []; default message [origin]]; default message [Origin is required]] [Field error in object 'flightSearchRequestDTO' on field 'destination': rejected value []; codes [NotBlank.flightSearchRequestDTO.destination,NotBlank.destination,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [flightSearchRequestDTO.destination,destination]; arguments []; default message [destination]]; default message [Destination is required]] 
+2026-02-25 09:55:00 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/flights/search | Status: 400 | Duration: 10ms
+2026-02-25 09:55:10 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:10 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:55:10 [parallel-11] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:10 [parallel-11] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [0ac264c7-666d-40d1-9643-2a0a9c5ce307]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [130]
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:10 [parallel-11] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:10 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de reserva para vuelo ID: 1
+2026-02-25 09:55:10 [reactor-http-nio-3] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Procesando reserva para vuelo ID: 1 y usuario ID: 1
+2026-02-25 09:55:10 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:10 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT EXISTS(SELECT 1 FROM tickets WHERE seat_number = $1 AND flight_id = $2 AND status != 'CANCELLED')]
+2026-02-25 09:55:10 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO tickets (flight_id, user_id, passenger_name, seat_number, price, ticket_class, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)]
+2026-02-25 09:55:10 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO reservations (user_id, ticket_id, flight_id, status, reservation_date, created_at) VALUES ($1, $2, $3, $4, $5, $6)]
+2026-02-25 09:55:10 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE flights SET flight_number = $1, origin = $2, destination = $3, departure_time = $4, arrival_time = $5, available_seats = $6, total_seats = $7, price = $8, airline = $9, status = $10, created_at = $11, updated_at = $12 WHERE flights.flight_id = $13]
+2026-02-25 09:55:10 [reactor-tcp-nio-10] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Reserva creada exitosamente con ID: 1
+2026-02-25 09:55:10 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:10 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:10 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/reservations | Status: 200 | Duration: 138ms
+2026-02-25 09:55:15 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:15 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'POST /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:55:15 [parallel-5] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:15 [parallel-5] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] POST /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [1972e98c-83fe-4533-8c54-ff4630598c31]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [123]
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:15 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:15 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de reserva para vuelo ID: 2
+2026-02-25 09:55:15 [reactor-http-nio-3] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Procesando reserva para vuelo ID: 2 y usuario ID: 1
+2026-02-25 09:55:15 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:15 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT EXISTS(SELECT 1 FROM tickets WHERE seat_number = $1 AND flight_id = $2 AND status != 'CANCELLED')]
+2026-02-25 09:55:15 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO tickets (flight_id, user_id, passenger_name, seat_number, price, ticket_class, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)]
+2026-02-25 09:55:15 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [INSERT INTO reservations (user_id, ticket_id, flight_id, status, reservation_date, created_at) VALUES ($1, $2, $3, $4, $5, $6)]
+2026-02-25 09:55:15 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE flights SET flight_number = $1, origin = $2, destination = $3, departure_time = $4, arrival_time = $5, available_seats = $6, total_seats = $7, price = $8, airline = $9, status = $10, created_at = $11, updated_at = $12 WHERE flights.flight_id = $13]
+2026-02-25 09:55:15 [reactor-tcp-nio-9] INFO  o.e.a.usecase.BookTicketUseCaseImpl - Reserva creada exitosamente con ID: 2
+2026-02-25 09:55:15 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:15 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:15 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] POST /airline/reservations | Status: 200 | Duration: 68ms
+2026-02-25 09:55:20 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/user/1
+2026-02-25 09:55:20 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'POST /logout'
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /airline/flights/search'
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'GET /airline/reservations/user/1' doesn't match 'null /actuator/**'
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations/user/1'; against '/airline/reservations/**'
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations/user/1' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:55:20 [parallel-13] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:20 [parallel-13] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] GET /airline/reservations/user/1 | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [e8ba5c0b-7bab-411c-8224-9346fff45556]
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/user/1
+2026-02-25 09:55:20 [parallel-13] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:20 [parallel-13] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de reservas para usuario ID: 1
+2026-02-25 09:55:20 [parallel-13] INFO  o.e.a.u.GetUserReservationsUseCaseImpl - Obteniendo reservaciones del usuario ID: 1
+2026-02-25 09:55:20 [reactor-tcp-nio-9] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT * FROM reservations WHERE user_id = $1]
+2026-02-25 09:55:20 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:20 [reactor-tcp-nio-10] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:20 [reactor-tcp-nio-9] INFO  o.e.a.u.GetUserReservationsUseCaseImpl - Reservaciones obtenidas exitosamente para usuario: 1
+2026-02-25 09:55:20 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:20 [reactor-tcp-nio-6] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:20 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] GET /airline/reservations/user/1 | Status: 200 | Duration: 23ms
+2026-02-25 09:55:26 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:26 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:55:26 [parallel-5] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:26 [parallel-5] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [ec33079c-86ad-47f6-8685-aa66997ec806]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:26 [parallel-5] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:26 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:55:26 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:55:26 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:55:26 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:55:26 [reactor-tcp-nio-7] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:55:26 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:26 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:26 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 55ms
+2026-02-25 09:55:36 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:36 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:55:36 [parallel-10] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:36 [parallel-10] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [ad9600ae-cdcc-44a0-b3e5-a4b7df68e2aa]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [96]
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:36 [parallel-10] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:36 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:55:36 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:55:36 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:55:36 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:36 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT EXISTS(SELECT 1 FROM tickets WHERE seat_number = $1 AND flight_id = $2 AND status != 'CANCELLED')]
+2026-02-25 09:55:36 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE tickets SET flight_id = $1, user_id = $2, passenger_name = $3, seat_number = $4, price = $5, ticket_class = $6, status = $7, created_at = $8, updated_at = $9 WHERE tickets.ticket_id = $10]
+2026-02-25 09:55:36 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:55:36 [reactor-tcp-nio-7] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:55:36 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:36 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:36 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 57ms
+2026-02-25 09:55:48 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:48 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'POST /logout'
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /airline/flights/search'
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'PUT /airline/reservations' doesn't match 'null /actuator/**'
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations'; against '/airline/reservations/**'
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:55:48 [parallel-4] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:48 [parallel-4] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] PUT /airline/reservations | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Type = [application/json]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [3596859d-cb8d-4082-98c6-63a3332dc587]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Content-Length = [59]
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations
+2026-02-25 09:55:48 [parallel-4] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:48 [reactor-http-nio-3] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de actualización de reserva ID: 1
+2026-02-25 09:55:48 [reactor-http-nio-3] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Actualizando reservación ID: 1
+2026-02-25 09:55:48 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:55:48 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:55:48 [reactor-tcp-nio-8] INFO  o.e.a.u.UpdateReservationUseCaseImpl - Reservación actualizada exitosamente: 1
+2026-02-25 09:55:48 [reactor-tcp-nio-8] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:48 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:48 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] PUT /airline/reservations | Status: 200 | Duration: 52ms
+2026-02-25 09:55:53 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/1
+2026-02-25 09:55:53 [reactor-http-nio-3] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/logout', method=POST}
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'DELETE /airline/reservations/1' doesn't match 'POST /logout'
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/auth/**', method=null}
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'DELETE /airline/reservations/1' doesn't match 'null /airline/auth/**'
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/flights/search', method=null}
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'DELETE /airline/reservations/1' doesn't match 'null /airline/flights/search'
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/actuator/**', method=null}
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Request 'DELETE /airline/reservations/1' doesn't match 'null /actuator/**'
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - No matches found
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - Trying to match using PathMatcherServerWebExchangeMatcher{pattern='/airline/reservations/**', method=null}
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.PathPatternParserServerWebExchangeMatcher - Checking match of request : '/airline/reservations/1'; against '/airline/reservations/**'
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.u.m.OrServerWebExchangeMatcher - matched
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.a.DelegatingReactiveAuthorizationManager - Checking authorization on '/airline/reservations/1' using org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager@5d0e4891
+2026-02-25 09:55:53 [parallel-9] DEBUG o.s.s.w.s.a.AuthorizationWebFilter - Authorization successful
+2026-02-25 09:55:53 [parallel-9] INFO  o.e.i.config.RequestLoggingWebFilter - ==> [REQUEST] DELETE /airline/reservations/1 | IP: 0:0:0:0:0:0:0:1
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Authorization = [Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MjAzMTI3NSwiZXhwIjoxNzcyMTE3Njc1fQ.3Du7FTiMRCMHuROlMtW_A25pefN_r6kdXi9YcZciHxU]
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: User-Agent = [PostmanRuntime/7.51.1]
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept = [*/*]
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Postman-Token = [41eb9208-0025-45f0-8691-17ba5066fa99]
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Host = [localhost:8085]
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Accept-Encoding = [gzip, deflate, br]
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.RequestLoggingWebFilter -     Header: Connection = [keep-alive]
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.JwtAuthenticationFilter - Processing request to: /airline/reservations/1
+2026-02-25 09:55:53 [parallel-9] DEBUG o.e.i.config.JwtAuthenticationFilter - Token válido para usuario: admin
+2026-02-25 09:55:53 [parallel-9] INFO  o.e.i.e.rest.ReservationController - Recibida solicitud de cancelación de reserva ID: 1
+2026-02-25 09:55:53 [parallel-9] INFO  o.e.a.u.CancelReservationUseCaseImpl - Cancelando reservación ID: 1
+2026-02-25 09:55:53 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT reservations.* FROM reservations WHERE reservations.reservation_id = $1 LIMIT 2]
+2026-02-25 09:55:53 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT tickets.* FROM tickets WHERE tickets.ticket_id = $1 LIMIT 2]
+2026-02-25 09:55:53 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE tickets SET flight_id = $1, user_id = $2, passenger_name = $3, seat_number = $4, price = $5, ticket_class = $6, status = $7, created_at = $8, updated_at = $9 WHERE tickets.ticket_id = $10]
+2026-02-25 09:55:53 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [SELECT flights.* FROM flights WHERE flights.flight_id = $1 LIMIT 2]
+2026-02-25 09:55:53 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE flights SET flight_number = $1, origin = $2, destination = $3, departure_time = $4, arrival_time = $5, available_seats = $6, total_seats = $7, price = $8, airline = $9, status = $10, created_at = $11, updated_at = $12 WHERE flights.flight_id = $13]
+2026-02-25 09:55:53 [reactor-tcp-nio-7] DEBUG o.s.r2dbc.core.DefaultDatabaseClient - Executing SQL statement [UPDATE reservations SET user_id = $1, ticket_id = $2, flight_id = $3, status = $4, observations = $5, reservation_date = $6, created_at = $7, updated_at = $8 WHERE reservations.reservation_id = $9]
+2026-02-25 09:55:53 [reactor-tcp-nio-7] INFO  o.e.a.u.CancelReservationUseCaseImpl - Reservación cancelada exitosamente: 1
+2026-02-25 09:55:53 [reactor-http-nio-3] INFO  o.e.i.config.RequestLoggingWebFilter - <== [RESPONSE] DELETE /airline/reservations/1 | Status: 200 | Duration: 76ms

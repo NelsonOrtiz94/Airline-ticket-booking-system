@@ -1,0 +1,657 @@
+{
+  "info": {
+    "_postman_id": "7913dd89-b590-4d07-b274-a0e88a7846de",
+    "name": "Airline Ticket Booking API - Completa",
+    "description": "Colección completa de la API de Reservas de Vuelos con todos los endpoints.\n\n## 🔐 Credenciales:\n- Username: admin\n- Password: password\n\n## 📝 Instrucciones:\n1. Ejecuta el LOGIN primero\n2. Copia el token de la respuesta\n3. El token se guarda automáticamente en la variable {{authToken}}\n4. Los demás endpoints usan el token automáticamente",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52383549",
+    "_collection_link": "https://go.postman.co/collection/52383549-7913dd89-b590-4d07-b274-a0e88a7846de?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Autenticación",
+      "item": [
+        {
+          "name": "Login - Obtener Token JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Guardar token automáticamente",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"authToken\", jsonData.token);",
+                  "    pm.collectionVariables.set(\"username\", jsonData.username);",
+                  "    console.log(\"✅ Token guardado: \" + jsonData.token.substring(0, 20) + \"...\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Inicia sesión y obtiene el token JWT.\n\n**Credenciales:**\n- Username: admin\n- Password: password\n\n**Respuesta:**\n```json\n{\n  \"token\": \"eyJhbGc...\",\n  \"username\": \"admin\",\n  \"role\": \"ADMIN\"\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar token",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3MTE4MzYzNCwiZXhwIjoxNzcxMjcwMDM0fQ.BVpgLgsmPqBuZd4w74TlbrL-CA7WnbpEp-Fb4wW13Zw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8085 /airline/auth/verify",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8085 ",
+              "path": [
+                "airline",
+                "auth",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de autenticación JWT"
+    },
+    {
+      "name": "2. Búsqueda de Vuelos",
+      "item": [
+        {
+          "name": "Buscar Vuelos - BOG a MDE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"origin\": \"BOG\",\n  \"destination\": \"MDE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/flights/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "flights",
+                "search"
+              ]
+            },
+            "description": "Buscar vuelos de Bogotá a Medellín.\n\n**No requiere autenticación** ✅"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Vuelos - BOG a CTG",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"origin\": \"BOG\",\n  \"destination\": \"CTG\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/flights/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "flights",
+                "search"
+              ]
+            },
+            "description": "Buscar vuelos de Bogotá a Cartagena."
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Vuelos - Con Fecha Específica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"origin\": \"BOG\",\n  \"destination\": \"MDE\",\n  \"departureDate\": \"2026-03-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/flights/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "flights",
+                "search"
+              ]
+            },
+            "description": "Buscar vuelos con fecha específica."
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Todos los Vuelos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"origin\": \"\",\n  \"destination\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/flights/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "flights",
+                "search"
+              ]
+            },
+            "description": "Buscar todos los vuelos disponibles (origen y destino vacíos)."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para buscar vuelos disponibles"
+    },
+    {
+      "name": "3. Gestión de Reservas",
+      "item": [
+        {
+          "name": "Crear Reserva - Asiento 12A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Guardar ID de reserva creada",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.reservationId) {",
+                  "        pm.collectionVariables.set(\"reservationId\", jsonData.data.reservationId);",
+                  "        console.log(\"✅ Reserva creada con ID: \" + jsonData.data.reservationId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"flightId\": 1,\n  \"passengerName\": \"Juan Pérez\",\n  \"seatNumber\": \"12A\",\n  \"observations\": \"Ventana preferida\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Crear una nueva reserva.\n\n**Requiere autenticación** 🔒\n\n**Validaciones:**\n- El vuelo debe existir\n- Debe haber asientos disponibles\n- El asiento no debe estar ocupado"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Reserva - Asiento 14B",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"flightId\": 2,\n  \"passengerName\": \"María García\",\n  \"seatNumber\": \"14B\",\n  \"observations\": \"Pasillo\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Crear otra reserva en vuelo diferente."
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Reservas de Usuario",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservations/user/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "user",
+                "1"
+              ]
+            },
+            "description": "Obtener todas las reservas de un usuario.\n\n**Requiere autenticación** 🔒"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Reserva - Cambiar Asiento",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reservationId\": {{reservationId}},\n  \"newSeatNumber\": \"15A\",\n  \"observations\": \"Cambio de asiento a ventana\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Actualizar una reserva existente.\n\n**Requiere autenticación** 🔒\n\nPuedes cambiar:\n- Número de asiento\n- Observaciones"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Reserva - Solo Observaciones",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reservationId\": {{reservationId}},\n  \"observations\": \"Sin equipaje de mano\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Actualizar solo las observaciones sin cambiar asiento."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar Reserva",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "{{reservationId}}"
+              ]
+            },
+            "description": "Cancelar una reserva.\n\n**Requiere autenticación** 🔒\n\n**Acciones:**\n- Cambia estado de reserva a CANCELLED\n- Cancela el ticket asociado\n- Devuelve el asiento al vuelo"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para gestionar reservas (CRUD completo)"
+    },
+    {
+      "name": "4. Casos de Prueba",
+      "item": [
+        {
+          "name": "❌ Login con Credenciales Incorrectas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"wrongpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Debe retornar 401 Unauthorized con mensaje de error."
+          },
+          "response": []
+        },
+        {
+          "name": "❌ Reserva sin Token (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"flightId\": 1,\n  \"passengerName\": \"Test User\",\n  \"seatNumber\": \"10A\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Intentar crear reserva sin token JWT.\n\n**Debe retornar:** 401 Unauthorized"
+          },
+          "response": []
+        },
+        {
+          "name": "❌ Asiento Duplicado (409 Conflict)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"flightId\": 1,\n  \"passengerName\": \"Test User\",\n  \"seatNumber\": \"12A\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Intentar reservar un asiento ya ocupado.\n\n**Debe retornar:** 409 Conflict\n**Mensaje:** El asiento 12A ya está ocupado"
+          },
+          "response": []
+        },
+        {
+          "name": "❌ Vuelo Inexistente (404)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"flightId\": 9999,\n  \"passengerName\": \"Test User\",\n  \"seatNumber\": \"10A\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Intentar reservar en un vuelo que no existe.\n\n**Debe retornar:** 404 Not Found"
+          },
+          "response": []
+        },
+        {
+          "name": "❌ Datos Inválidos en Reserva (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"flightId\": \"\",\n  \"passengerName\": \"\",\n  \"seatNumber\": \"XYZ\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Enviar datos inválidos.\n\n**Debe retornar:** 400 Bad Request con validaciones"
+          },
+          "response": []
+        }
+      ],
+      "description": "Casos de prueba para errores y validaciones"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/airline",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "admin",
+      "type": "string"
+    },
+    {
+      "key": "reservationId",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}

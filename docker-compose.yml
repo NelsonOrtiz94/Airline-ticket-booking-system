@@ -1,0 +1,78 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: airline-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: airline_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - airline-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  airline-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airline-api
+    restart: unless-stopped
+    environment:
+      # Database Configuration
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: airline_db
+      DB_USER: postgres
+      DB_PASSWORD: admin
+
+      # JWT Configuration
+      JWT_SECRET: mySecretKeyForJWTTokenGenerationAndValidation123456789
+
+      # Spring Boot Configuration
+      SPRING_PROFILES_ACTIVE: prod
+
+      # R2DBC Connection Pool Configuration
+      SPRING_R2DBC_POOL_INITIAL_SIZE: 10
+      SPRING_R2DBC_POOL_MAX_SIZE: 20
+      SPRING_R2DBC_POOL_MAX_IDLE_TIME: 30m
+
+      # Logging Configuration
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: INFO
+      LOGGING_LEVEL_ORG_EXAMPLE: DEBUG
+
+      # Java Options
+      JAVA_OPTS: "-Xms512m -Xmx1024m -XX:+UseG1GC"
+    ports:
+      - "8085:8085"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - airline-network
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8085/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  airline-network:
+    driver: bridge
+

@@ -1,0 +1,70 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: airplane-ticket-booking
+
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:airline_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:admin}
+    pool:
+      # número de conexiones
+      initial-size: 10
+      # maximo de conexiones simultaneas permitidas
+      max-size: 20
+      # Tiempo de espera para obtener una conexión del pool antes de lanzar una excepción
+      max-idle-time: 30m
+      # Tiempo máximo que una conexión puede estar activa antes de ser cerrada y reemplazada por una nueva
+      max-life-time: 60m
+      # Tiempo máximo para adquirir una conexión del pool antes de lanzar una excepción
+      max-acquire-time: 3s
+        # Tiempo máximo para crear una nueva conexión antes de lanzar una excepción
+      max-create-connection-time: 3s
+      # Tiempo entre validaciones de conexiones inactivas en el pool
+      validation-query: SELECT 1
+      # Nivel de validación de conexiones inactivas en el pool (LOCAL, REMOTE, ALL)
+      validation-depth: LOCAL
+
+
+  security:
+    jwt:
+      secret: ${JWT_SECRET:mySecretKeyForJWTTokenGenerationAndValidation123456789}
+      expiration: 86400000 # 24 hours in milliseconds
+
+# Management endpoints para health checks
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.example: DEBUG
+    org.springframework.r2dbc: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/airline-api.log
+
+# Custom application properties
+app:
+  date-format: dd/MM/yyyy HH:mm:ss
+  max-name-length: 30
+  max-description-length: 100
+
