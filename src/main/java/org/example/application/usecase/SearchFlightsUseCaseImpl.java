@@ -9,7 +9,9 @@ import org.example.domain.model.Flight;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
-
+/**
+ * Implementación del caso de uso para buscar vuelos
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

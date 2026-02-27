@@ -13,7 +13,9 @@ import org.example.domain.valueobject.ReservationId;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-
+/**
+ * Implementación del caso de uso para cancelar reservaciones
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

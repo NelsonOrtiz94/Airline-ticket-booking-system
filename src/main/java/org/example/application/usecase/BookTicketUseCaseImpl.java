@@ -22,7 +22,9 @@ import org.example.domain.valueobject.UserId;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-
+/**
+ * Implementación del caso de uso para reservar tickets
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

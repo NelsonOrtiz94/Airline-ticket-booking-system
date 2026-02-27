@@ -6,7 +6,9 @@ import org.example.domain.valueobject.UserId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
+/**
+ * Puerto de salida para operaciones de persistencia de Reservation
+ */
 public interface ReservationRepositoryPort {
     Mono<Reservation> findById(ReservationId reservationId);
     Mono<Reservation> save(Reservation reservation);

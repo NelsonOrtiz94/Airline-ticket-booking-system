@@ -8,7 +8,9 @@ import org.example.domain.valueobject.UserId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
+/**
+ * Puerto de salida para operaciones de persistencia de Ticket
+ */
 public interface TicketRepositoryPort {
     Mono<Ticket> findById(TicketId ticketId);
     Mono<Ticket> save(Ticket ticket);

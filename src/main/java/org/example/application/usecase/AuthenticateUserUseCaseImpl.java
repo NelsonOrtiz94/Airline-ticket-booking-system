@@ -13,7 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-
+/**
+ * Implementación del caso de uso de autenticación
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
