@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 /**
- * Implementación del caso de uso para obtener reservaciones de un usuario
- */
+ * Implementación del caso de uso para obtener reservaciones de un usuario*/
 @Slf4j
 @Service
 @RequiredArgsConstructor
