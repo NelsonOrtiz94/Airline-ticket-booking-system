@@ -1,8 +1,6 @@
 package org.example.application.command;
 
-/**
- * Comando para autenticar un usuario
- */
+
 public record AuthenticateUserCommand(
     String username,
     String password

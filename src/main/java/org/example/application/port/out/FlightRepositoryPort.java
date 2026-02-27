@@ -7,9 +7,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
-/**
- * Puerto de salida para operaciones de persistencia de Flight
- */
+
 public interface FlightRepositoryPort {
     Mono<Flight> findById(FlightId flightId);
     Mono<Flight> save(Flight flight);

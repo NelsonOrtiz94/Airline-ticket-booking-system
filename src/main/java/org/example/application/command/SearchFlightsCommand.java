@@ -2,9 +2,7 @@ package org.example.application.command;
 
 import java.time.LocalDateTime;
 
-/**
- * Comando para buscar vuelos
- */
+
 public record SearchFlightsCommand(
     String origin,
     String destination,

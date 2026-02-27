@@ -1,8 +1,6 @@
 package org.example.application.command;
 
-/**
- * Comando para cancelar una reservación
- */
+
 public record CancelReservationCommand(
     Long reservationId,
     String reason

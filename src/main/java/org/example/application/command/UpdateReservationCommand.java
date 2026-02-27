@@ -1,8 +1,6 @@
 package org.example.application.command;
 
-/**
- * Comando para actualizar una reservación
- */
+
 public record UpdateReservationCommand(
     Long reservationId,
     String seatNumber,

@@ -1,8 +1,6 @@
 package org.example.application.command;
 
-/**
- * Comando para reservar un ticket
- */
+
 public record BookTicketCommand(
     Long userId,
     Long flightId,
